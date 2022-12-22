@@ -1,10 +1,10 @@
-import { GameOutcome } from "../shared/GameOutcome";
+import { SpinResult } from "../shared/SpinResult";
 
 const spin = async () => {
     const port = 3000;
     const result = await fetch(`http://localhost:${port}/spin`, { method: "POST" });
     const data = await result.json();
-    const outcome:GameOutcome = data;
+    const outcome:SpinResult = data;
     console.log("result ", outcome);
 }
 
