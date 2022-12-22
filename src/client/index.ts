@@ -1,18 +1,27 @@
-import { SpinResult } from "../shared/SpinResult";
+import {Application} from "pixi.js";
+import {AssetsHelper} from "./utils/AssetsHelper";
+import {SpinButton} from "./views/SpinButton";
 
-const spin = async () => {
-    const port = 3000;
-    const result = await fetch(`http://localhost:${port}/spin`, { method: "POST" });
-    const data = await result.json();
-    const outcome:SpinResult = data;
-    console.log("result ", outcome);
-}
+const main = async () => {
+    const app = new Application({resolution: window.devicePixelRatio});
+    document.body.appendChild(app.view as any);
+    await AssetsHelper.loadAll([
+        "spinButton.png",
+        "spinButtonDisabled.png",
+        "spinButtonDown.png",
+        "spinButtonHover.png",
+        "SYM0.png",
+        "SYM1.png",
+        "SYM2.png",
+        "SYM3.png",
+        "SYM4.png",
+        "SYM5.png"
+    ]);
 
-const init = () => {
-    const spinButton = document.createElement("button");
-    spinButton.innerText = "Spin Button";
-    spinButton.addEventListener("click", spin);
-    document.body.appendChild(spinButton)
-}
+    let spinButton = new SpinButton();
+    spinButton.x = spinButton.width * 0.5;
+    spinButton.y = spinButton.height * 0.5;
+    app.stage.addChild(spinButton);
+};
 
-init()
+main();
