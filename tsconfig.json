@@ -1,6 +1,7 @@
 {
   "compilerOptions": {
     "target": "es5",
+    "resolveJsonModule": true,
     "module": "commonjs",
     "lib": ["ES2015", "DOM"],
     "strict": true,

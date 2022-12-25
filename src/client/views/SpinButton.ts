@@ -14,16 +14,19 @@ export class SpinButton extends Button {
         });
     }
 
-    protected onDown(e: FederatedPointerEvent) {
-        super.onDown(e);
-        this.enabled = false;
-        gsap.to(this, {
-            rotation: Math.PI * 2,
-            duration: 0.5,
-            onComplete: () => {
-                this.enabled = true;
-                this.rotation = 0;
-            }
-        });
+    protected onUp(e: FederatedPointerEvent) {
+        super.onUp(e);
+        // TODO: if was down?
+        this.emit("spin");
+    }
+    public async spinAnimation(): Promise<void> {
+        return gsap
+            .timeline()
+            .to(this, {
+                rotation: Math.PI * 2,
+                duration: 0.5,
+                onComplete: () => (this.rotation = 0)
+            })
+            .then();
     }
 }
