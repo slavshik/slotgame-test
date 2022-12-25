@@ -46,18 +46,14 @@ export class ReelView extends SpinningReelView {
 
     protected onDecelerationEnded(shiftY: number): void {
         this.emit(ReelView.ON_DECELERATED, shiftY);
-        // TODO: remove this hack
-        gsap.to(this, {
-            shiftY,
-            duration: 0.5,
-            ease: "elastic.out",
-            onComplete: () => {
-                if (this.offset >= this.tape.length) {
-                    this.shiftY = this.shiftY % this.tapeHeight;
-                }
-                this.emit(ReelView.ON_STOP);
+        const onComplete = () => {
+            if (this.offset >= this.tape.length) {
+                this.shiftY = this.shiftY % this.tapeHeight;
             }
-        });
+            this.emit(ReelView.ON_STOP);
+        };
+        // onComplete();
+        gsap.to(this, {shiftY, duration: 0.5, ease: "elastic.out", onComplete});
     }
     public get offset(): number {
         return this.shiftY / ReelView.SYMBOL_HEIGHT;

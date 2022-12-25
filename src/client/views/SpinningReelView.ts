@@ -6,20 +6,19 @@ export abstract class SpinningReelView extends Container {
     private acceleration = 0;
     private stopY = 0;
 
-    constructor(private _shiftY: number = 0, private maxSpeed = 25) {
+    constructor(private _shiftY: number = 0, private maxSpeed = 1, private accelerationTime = 1) {
         super();
     }
 
-    /**
-     * Starts acceleration
-     * @param time - time in seconds
-     */
-    public accelerate(time = 40) {
-        this.acceleration = (this.maxSpeed * this.maxSpeed - this.speed * this.speed) / (2 * time);
+    public accelerate() {
+        const time = (this.accelerationTime * 1000) / Ticker.shared.elapsedMS;
+        const distance = this.maxSpeed * time;
+        this.acceleration = (this.maxSpeed * this.maxSpeed - this.speed * this.speed) / distance;
         Ticker.shared.remove(this.update, this);
         Ticker.shared.add(this.update, this);
     }
-    protected update(delta: number) {
+    protected update() {
+        const delta = Ticker.shared.elapsedMS;
         this.speed += this.acceleration * delta;
         if (this.speed > this.maxSpeed) {
             this.speed = this.maxSpeed;
