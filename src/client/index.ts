@@ -2,6 +2,9 @@ import {Application, DisplayObject} from "pixi.js";
 import {AssetsHelper} from "./utils/AssetsHelper";
 import {GameView} from "./views/GameView";
 import {IResizable} from "./views/IResizable";
+import {ReelView} from "./views/ReelView";
+import {GameModel} from "./model/GameModel";
+import {Random} from "../shared/Random";
 
 const main = async () => {
     const app = new Application({resolution: window.devicePixelRatio});
@@ -30,6 +33,20 @@ const main = async () => {
         ],
         ["casino.fnt"]
     );
+    // const model = new GameModel();
+    // const reel = new ReelView(model.tapes[0]);
+    // reel.y = 40;
+    // app.stage.addChild(reel);
+    // (window as any).reel = reel;
+    // let accelerating = false;
+    // document.addEventListener("click", () => {
+    //     if (!accelerating) {
+    //         reel.accelerate();
+    //     } else {
+    //         reel.decelerate();
+    //     }
+    //     accelerating = !accelerating;
+    // });
     const gameView = new GameView();
     resizableViews.push(gameView);
     app.stage.addChild(gameView);

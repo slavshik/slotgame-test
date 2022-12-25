@@ -6,7 +6,7 @@ export class GameModel {
         const port = 3000;
         const response = await fetch(`http://localhost:${port}/spin`, {method: "POST"});
         const spinResult = await response.json();
-        console.log(spinResult.reels.map(this.symbolToEmoji).join(" "));
+        console.log("Response:", spinResult.reels.map(this.symbolToEmoji).join(" "));
         return spinResult;
     }
     public get tapes(): number[][] {

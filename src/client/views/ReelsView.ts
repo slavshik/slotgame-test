@@ -1,4 +1,3 @@
-import gsap from "gsap/gsap-core";
 import {Container} from "@pixi/display";
 import {GameModel} from "../model/GameModel";
 import {ReelView} from "./ReelView";
@@ -18,36 +17,25 @@ export class ReelsView extends Container {
         }
     }
 
-    public async animateSpinStart() {
-        // return Promise.all(
-        //     this.reels.map(reel => {
-        //         const offset1 = reel.offset + 1;
-        //         const duration1 = this.model.spinSpeed;
-        //         const offset2 = reel.offset + 10;
-        //         const duration2 = 10 * this.model.spinSpeed;
-        //         return gsap
-        //             .timeline()
-        //             .to(reel, {offset: offset1, duration: duration1, ease: "sine.in"})
-        //             .to(reel, {offset: offset2, duration: duration2, ease: "linear"})
-        //             .then(() => reel.fixPosition());
-        //     })
-        // );
+    public async startSpin() {
+        return Promise.all(
+            this.reels.map(
+                reel =>
+                    new Promise(resolve => {
+                        reel.spin();
+                        reel.once(ReelView.ON_ACCELERATED, resolve);
+                    })
+            )
+        );
     }
 
-    public async animateSpinStop(offsets: number[]) {
+    public async stopSpin(offsets: number[]) {
         return Promise.all(
             offsets.map((offset, index) => {
                 const reel = this.reels[index];
-                // reel.fixPosition();
-                const offsetDiff = offset - reel.offset;
-                if (offsetDiff < 0) {
-                    offset += this.model.tapes[index].length;
-                }
-                const duration = (offset - reel.offset) * this.model.spinSpeed;
-                return gsap
-                    .timeline()
-                    .to(reel, {offset, duration, ease: "sine.out"})
-                    .then(() => reel.fixPosition());
+                const promise = new Promise(resolve => reel.once(ReelView.ON_STOP, resolve));
+                reel.stopAt(offset);
+                return promise;
             })
         );
     }

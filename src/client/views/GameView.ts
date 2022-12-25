@@ -24,11 +24,13 @@ export class GameView extends Container implements IResizable {
         const spinPromise = this.model.spin();
         await Promise.all([
             this.status.clear(),
-            this.reels.animateSpinStart(),
+            this.reels.startSpin(),
             this.spinButton.spinAnimation()
         ]);
         const spinResult = await spinPromise;
-        await this.reels.animateSpinStop(spinResult.reels);
+        await this.reels.stopSpin(spinResult.reels);
+        // @ts-ignore
+        // this.reels.reels.forEach((reel, index) => console.log(index, "=>", reel.offset));
         await this.status.animateWinType(spinResult.winType);
         if (spinResult.bonusGame) {
             await this.status.animateBonus();
@@ -43,6 +45,6 @@ export class GameView extends Container implements IResizable {
         this.reels.x = (width - this.reels.width) / 2;
         this.reels.y = (height - this.reels.height) / 2;
         this.spinButton.x = width / 2;
-        this.spinButton.y = height / 2;
+        this.spinButton.y = this.reels.y + this.reels.height + this.spinButton.height / 2 + 20;
     }
 }
