@@ -20,9 +20,9 @@ export class GameView extends Container implements IResizable {
         this.addChild(this.spinButton);
     }
 
-    protected async onSpinButtonClick(): Promise<void> {
+    protected async onSpinButtonClick(bonus = false): Promise<void> {
         this.spinButton.enabled = false;
-        const spinPromise = this.model.spin();
+        const spinPromise = this.model.spin(bonus);
         await Promise.all([
             this.status.clear(),
             this.reels.startSpin(), //.then(() => new Promise(resolve => setTimeout(resolve, 1000))),
@@ -33,7 +33,7 @@ export class GameView extends Container implements IResizable {
         await this.status.animateWinType(spinResult.winType);
         if (spinResult.bonusGame) {
             await this.status.animateBonus();
-            return this.onSpinButtonClick();
+            return this.onSpinButtonClick(true);
         }
         this.spinButton.enabled = true;
     }

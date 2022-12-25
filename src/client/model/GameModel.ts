@@ -1,14 +1,18 @@
 import {SpinResult} from "../../shared/SpinResult";
-import * as config from "./client-config.json";
+import * as config from "../client-config.json";
 import {IGameConfig} from "../interfaces/IGameConfig";
-
+const symbolToEmoji = (index: number): string => ["🟫", "🍓", "🍍", "🍇", "🍉", "🍋"][index] || "?";
 export class GameModel {
-    public async spin(): Promise<SpinResult> {
-        const response = await fetch(`${location.protocol}//${config.host}:${config.port}/spin`, {
+    public async spin(bonus = false): Promise<SpinResult> {
+        const url = `${location.protocol}//${config.host}:${config.port}/spin`;
+        const response = await fetch(`${url}/${bonus ? "bonus" : ""}`, {
             method: "POST"
         });
         const spinResult = await response.json();
-        console.log("Response:", spinResult.reels.map(this.symbolToEmoji).join(" "));
+        console.log(
+            "Response:",
+            spinResult.reels.map(symbolToEmoji).join(" ") + (spinResult.bonusGame ? " + BONUS" : "")
+        );
         return spinResult;
     }
     public get tapes(): number[][] {
@@ -16,22 +20,5 @@ export class GameModel {
     }
     public get config(): IGameConfig {
         return config;
-    }
-    private symbolToEmoji(reel: number): string {
-        switch (reel) {
-            case 0:
-                return "🟫";
-            case 1:
-                return "🍓";
-            case 2:
-                return "🍍";
-            case 3:
-                return "🍇";
-            case 4:
-                return "🍉";
-            case 5:
-                return "🍋";
-        }
-        return "?";
     }
 }
