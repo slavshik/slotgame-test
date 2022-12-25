@@ -48,25 +48,28 @@ export class ReelView extends SpinningReelView {
     protected onDecelerationEnded(shiftY: number): void {
         this.emit(ReelView.ON_DECELERATED, shiftY);
         const onComplete = () => {
-            const offset = this.shiftY / ReelView.SYMBOL_HEIGHT;
-            if (offset >= this.tape.length) {
+            if (this.offset >= this.tape.length) {
                 this.shiftY = this.shiftY % this.tapeHeight;
             }
+            // const currentSymbol = this.symbols[this.offset];
             this.emit(ReelView.ON_STOP);
         };
         // onComplete();
         gsap.to(this, {shiftY, duration: 0.5, ease: "elastic.out", onComplete});
     }
-
+    protected get offset(): number {
+        return this.shiftY / ReelView.SYMBOL_HEIGHT;
+    }
     public spin(): void {
         this.emit(ReelView.ON_START);
         this.accelerate();
     }
-    public stop(offset: number): void {
-        let diff = offset - this.shiftY / ReelView.SYMBOL_HEIGHT;
-        if (diff < 0) {
-            diff += Math.ceil(Math.abs(diff) / this.tape.length) * this.tape.length;
+    public stop(atOffset: number): void {
+        let dist = atOffset - this.offset;
+        if (dist < 0) {
+            // add space to prevent reels braking backwards
+            dist += Math.ceil(Math.abs(dist) / this.tape.length) * this.tape.length;
         }
-        this.decelerate(diff * ReelView.SYMBOL_HEIGHT);
+        this.decelerate(dist * ReelView.SYMBOL_HEIGHT);
     }
 }

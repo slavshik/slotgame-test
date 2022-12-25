@@ -25,7 +25,7 @@ export class GameView extends Container implements IResizable {
         const spinPromise = this.model.spin();
         await Promise.all([
             this.status.clear(),
-            this.reels.startSpin(),
+            this.reels.startSpin(), //.then(() => new Promise(resolve => setTimeout(resolve, 1000))),
             this.spinButton.spinAnimation()
         ]);
         const spinResult = await spinPromise;
@@ -39,10 +39,11 @@ export class GameView extends Container implements IResizable {
     }
 
     public resize(width: number, height: number): void {
-        const scale = width / Math.max(width, ReelView.REEL_WIDTH * this.model.tapes.length + 20);
+        const reelsWidth = ReelView.REEL_WIDTH * this.model.tapes.length;
+        const scale = width / Math.max(width, reelsWidth + 20);
         [this.reels, this.spinButton, this.status].forEach(view => view.scale.set(scale));
         this.reels.position.set(
-            (width - this.reels.width) * 0.5,
+            (width - reelsWidth * scale) * 0.5,
             (height - this.reels.height) * 0.5
         );
         this.status.position.set(
