@@ -4,6 +4,7 @@ import {GameModel} from "../model/GameModel";
 import {ReelsView} from "./ReelsView";
 import {IResizable} from "./IResizable";
 import {StatusText} from "./StatusText";
+import {ReelView} from "./ReelView";
 
 export class GameView extends Container implements IResizable {
     private readonly model = new GameModel();
@@ -29,8 +30,6 @@ export class GameView extends Container implements IResizable {
         ]);
         const spinResult = await spinPromise;
         await this.reels.stopSpin(spinResult.reels);
-        // @ts-ignore
-        // this.reels.reels.forEach((reel, index) => console.log(index, "=>", reel.offset));
         await this.status.animateWinType(spinResult.winType);
         if (spinResult.bonusGame) {
             await this.status.animateBonus();
@@ -40,11 +39,12 @@ export class GameView extends Container implements IResizable {
     }
 
     resize(width: number, height: number): void {
-        this.status.x = width / 2;
-        this.status.y = 50;
-        this.reels.x = (width - this.reels.width) / 2;
-        this.reels.y = (height - this.reels.height) / 2;
-        this.spinButton.x = width / 2;
+        const scale = width / Math.max(width, ReelView.REEL_WIDTH * this.model.tapes.length + 20);
+        [this.reels, this.spinButton, this.status].forEach(view => view.scale.set(scale));
+        this.reels.x = (width - this.reels.width) * 0.5;
+        this.status.x = this.spinButton.x = width * 0.5;
+        this.reels.y = (height - this.reels.height) * 0.5;
+        this.status.y = this.reels.y - this.status.height - 20;
         this.spinButton.y = this.reels.y + this.reels.height + this.spinButton.height / 2 + 20;
     }
 }

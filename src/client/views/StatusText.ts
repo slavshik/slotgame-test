@@ -36,11 +36,7 @@ export class StatusText extends Container {
     public async bump(scale: number): Promise<void> {
         return gsap
             .timeline()
-            .fromTo(
-                this.label.scale,
-                {x: 0, y: 0},
-                {x: scale, y: scale, ease: "back.out", duration: 0.5}
-            )
+            .fromTo(this.label.scale, {x: 0, y: 0}, {x: scale, y: scale, ease: "back.out"})
             .then();
     }
 }
