@@ -1,9 +1,11 @@
 import {Application, DisplayObject} from "pixi.js";
 import {AssetsHelper} from "./utils/AssetsHelper";
 import {GameView} from "./views/GameView";
-import {IResizable} from "./views/IResizable";
+import {IResizable} from "./interfaces/IResizable";
+import {GameModel} from "./model/GameModel";
 
 const main = async () => {
+    console.time("load");
     const app = new Application({resolution: window.devicePixelRatio});
     document.body.appendChild(app.view as any);
     const resizableViews: (DisplayObject & IResizable)[] = [];
@@ -14,7 +16,6 @@ const main = async () => {
         resizableViews.forEach(view => (view.resize ? view.resize(width, height) : void 0));
     };
     window.addEventListener("resize", onResize);
-    onResize();
     await AssetsHelper.loadAll(
         [
             "spinButton.png",
@@ -30,26 +31,11 @@ const main = async () => {
         ],
         ["casino.fnt"]
     );
-    // const model = new GameModel();
-    // const reel = new ReelView(model.tapes[0], 1);
-    // reel.y = 40;
-    // app.stage.addChild(reel);
-    // (window as any).reel = reel;
-    // let accelerating = false;
-    // //@ts-ignore
-    // reel.on(ReelView.ON_STOP, () => console.log(model.symbolToEmoji(reel.offset)));
-    // document.addEventListener("click", () => {
-    //     if (!accelerating) {
-    //         reel.spin();
-    //     } else {
-    //         reel.stopAt(Random.range(0, 5));
-    //     }
-    //     accelerating = !accelerating;
-    // });
-    const gameView = new GameView();
+    const gameView = new GameView(new GameModel());
     resizableViews.push(gameView);
     app.stage.addChild(gameView);
     onResize();
+    console.timeEnd("load");
 };
 
 main();

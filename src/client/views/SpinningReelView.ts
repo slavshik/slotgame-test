@@ -1,43 +1,44 @@
 import {Container} from "@pixi/display";
 import {Ticker} from "pixi.js";
+import {IReelConfig} from "../interfaces/IReelConfig";
 
 export abstract class SpinningReelView extends Container {
     private speed = 0;
     private acceleration = 0;
     private stopY = 0;
-
-    constructor(private _shiftY: number = 0, private maxSpeed = 1, private accelerationTime = 1) {
+    protected abstract onAccelerationEnded(): void;
+    protected abstract onDecelerationEnded(shiftY: number): void;
+    protected abstract updateShift(shift: number): void;
+    protected constructor(private _shiftY: number = 0, private config: IReelConfig) {
         super();
     }
 
-    public accelerate() {
-        const time = (this.accelerationTime * 1000) / Ticker.shared.elapsedMS;
-        const distance = this.maxSpeed * time;
-        this.acceleration = (this.maxSpeed * this.maxSpeed - this.speed * this.speed) / distance;
+    public accelerate(): void {
+        const time = this.config.accelerationTime * 1000 * this.config.maxSpeed;
+        this.acceleration = (this.config.maxSpeed ** 2 - this.speed ** 2) / time;
         Ticker.shared.remove(this.update, this);
         Ticker.shared.add(this.update, this);
     }
-    protected update() {
+    protected update(): void {
         const delta = Ticker.shared.elapsedMS;
-        this.speed += this.acceleration * delta;
-        if (this.speed > this.maxSpeed) {
-            this.speed = this.maxSpeed;
+
+        if (this.speed > this.config.maxSpeed) {
+            this.speed = this.config.maxSpeed;
             this.acceleration = 0;
             this.onAccelerationEnded();
         }
-        this.shiftY += this.speed * delta;
+
         if (this.speed < 0) {
             this.speed = 0;
             this.acceleration = 0;
             Ticker.shared.remove(this.update, this);
             this.onDecelerationEnded(this.stopY);
         }
+        this.speed += this.acceleration * delta;
+        this.shiftY += this.speed * delta;
     }
-    protected abstract onAccelerationEnded(): void;
-    protected abstract onDecelerationEnded(shiftY: number): void;
-    protected abstract updateShift(shift: number): void;
-    public decelerate(distance: number) {
-        this.acceleration = -(this.speed * this.speed) / (distance * 2);
+    public decelerate(distance: number): void {
+        this.acceleration = -(this.speed ** 2) / (2 * distance);
         this.stopY = this._shiftY + distance;
     }
 

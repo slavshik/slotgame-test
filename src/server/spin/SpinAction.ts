@@ -16,7 +16,7 @@ export class SpinAction extends BaseSpinAction<SpinResult, SpinActionParams | un
         return {reels: values, winType, bonusGame: this.getBonus()};
     }
     protected getStopPositions(): number[] {
-        return this.config.tapes.map(tape => Random.range(tape.length - 1));
+        return this.config.tapes.map(tape => Random.int(tape.length - 1));
     }
     protected getWinType(positions: number[]): WinType {
         const symLengths: number[] = [];

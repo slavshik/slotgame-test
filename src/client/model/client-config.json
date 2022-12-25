@@ -1,0 +1,13 @@
+{
+  "host": "localhost",
+  "port": 3000,
+  "tapes": [
+    [0, 1, 2, 3, 4, 5],
+    [0, 1, 2, 3, 4, 5],
+    [0, 1, 2, 3, 4, 5]
+  ],
+  "reel": {
+    "maxSpeed": 2,
+    "accelerationTime": 1.5
+  }
+}

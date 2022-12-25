@@ -16,7 +16,6 @@ export class SpinButton extends Button {
 
     protected onUp(e: FederatedPointerEvent) {
         super.onUp(e);
-        // TODO: if was down?
         this.emit("spin");
     }
     public async spinAnimation(): Promise<void> {

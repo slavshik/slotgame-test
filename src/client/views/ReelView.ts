@@ -3,6 +3,7 @@ import {Container} from "@pixi/display";
 import {AssetsHelper} from "../utils/AssetsHelper";
 import {Graphics, Sprite} from "pixi.js";
 import {SpinningReelView} from "./SpinningReelView";
+import {IReelConfig} from "../interfaces/IReelConfig";
 
 export class ReelView extends SpinningReelView {
     static readonly ON_START = "onStart";
@@ -18,8 +19,8 @@ export class ReelView extends SpinningReelView {
         .drawRect(0, 0, ReelView.REEL_WIDTH, ReelView.SYMBOL_HEIGHT)
         .endFill();
     private readonly tapeHeight = this.tape.length * ReelView.SYMBOL_HEIGHT;
-    constructor(private readonly tape: number[], offset = 0) {
-        super(offset * ReelView.SYMBOL_HEIGHT);
+    constructor(private readonly tape: number[], offset = 0, config: IReelConfig) {
+        super(offset * ReelView.SYMBOL_HEIGHT, config);
         this.tape.forEach((id, index) => {
             const sprite = AssetsHelper.createSymbolSprite(id);
             this.symbols.push(sprite);
@@ -33,21 +34,22 @@ export class ReelView extends SpinningReelView {
         this.addChild(this.reelCont);
         this.updateShift(this.shiftY);
     }
-    protected updateShift(value: number) {
+    protected updateShift(value: number): void {
         const reelOffset = value - this.reelCont.y;
         this.symbols.forEach((symbol, index) => {
             symbol.y = (reelOffset - index * ReelView.SYMBOL_HEIGHT) % this.tapeHeight;
         });
     }
 
-    protected onAccelerationEnded() {
+    protected onAccelerationEnded(): void {
         this.emit(ReelView.ON_ACCELERATED);
     }
 
     protected onDecelerationEnded(shiftY: number): void {
         this.emit(ReelView.ON_DECELERATED, shiftY);
         const onComplete = () => {
-            if (this.offset >= this.tape.length) {
+            const offset = this.shiftY / ReelView.SYMBOL_HEIGHT;
+            if (offset >= this.tape.length) {
                 this.shiftY = this.shiftY % this.tapeHeight;
             }
             this.emit(ReelView.ON_STOP);
@@ -55,19 +57,15 @@ export class ReelView extends SpinningReelView {
         // onComplete();
         gsap.to(this, {shiftY, duration: 0.5, ease: "elastic.out", onComplete});
     }
-    public get offset(): number {
-        return this.shiftY / ReelView.SYMBOL_HEIGHT;
-    }
 
-    public spin() {
+    public spin(): void {
         this.emit(ReelView.ON_START);
         this.accelerate();
     }
-    public stopAt(offset: number) {
-        let diff = offset - this.offset;
+    public stop(offset: number): void {
+        let diff = offset - this.shiftY / ReelView.SYMBOL_HEIGHT;
         if (diff < 0) {
-            const fix = Math.ceil(Math.abs(diff) / this.tape.length) * this.tape.length;
-            diff += fix;
+            diff += Math.ceil(Math.abs(diff) / this.tape.length) * this.tape.length;
         }
         this.decelerate(diff * ReelView.SYMBOL_HEIGHT);
     }

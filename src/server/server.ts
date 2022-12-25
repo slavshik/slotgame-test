@@ -1,6 +1,6 @@
 import express from "express";
 import cors from "cors";
-import * as config from "./game-config.json";
+import * as config from "./server-config.json";
 import {SpinAction} from "./spin/SpinAction";
 
 const port = 3000;

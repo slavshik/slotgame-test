@@ -4,10 +4,9 @@ export class Random {
      * @param start - from or until (if end is undefined)
      * @param end - end of range
      */
-    static rangeFloat = (start: number, end = 0): number => start + Math.random() * (end - start);
+    static float = (start: number, end = 0): number => start + Math.random() * (end - start);
 
-    static range = (start: number, end?: number): number =>
-        Math.floor(Random.rangeFloat(start, end));
+    static int = (start: number, end?: number): number => Math.floor(Random.float(start, end));
 
     /**
      * true or false

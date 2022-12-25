@@ -2,9 +2,9 @@ import {Random} from "../src/shared/Random";
 
 describe("Random", () => {
     it("from range", () => {
-        expect([0, 1, 2, 3, 4, 5]).toContain(Random.range(5));
-        expect([-2, -1, 0, 1, 2]).toContain(Random.range(-2, 2));
-        expect([-4, -3, -2]).toContain(Random.range(-4, -2));
+        expect([0, 1, 2, 3, 4, 5]).toContain(Random.int(5));
+        expect([-2, -1, 0, 1, 2]).toContain(Random.int(-2, 2));
+        expect([-4, -3, -2]).toContain(Random.int(-4, -2));
     });
     it("true or false", () => {
         expect([true, false]).toContain(Random.bool());
