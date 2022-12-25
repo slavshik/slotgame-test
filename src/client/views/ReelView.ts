@@ -27,16 +27,16 @@ export class ReelView extends SpinningReelView {
             sprite.y = index * ReelView.SYMBOL_HEIGHT;
             this.reelCont.addChild(sprite);
         });
-        this.reelCont.y = this.tapeHeight * 0.5;
+        this.reelCont.y = -this.tapeHeight * 0.5;
         this.reelCont.mask = this.maskCont;
         this.addChild(this.maskCont);
         this.addChild(this.reelCont);
         this.updateShift(this.shiftY);
     }
     protected updateShift(value: number) {
-        const reelOffset = -value - this.reelCont.y;
+        const reelOffset = value - this.reelCont.y;
         this.symbols.forEach((symbol, index) => {
-            symbol.y = (reelOffset + index * ReelView.SYMBOL_HEIGHT) % this.tapeHeight;
+            symbol.y = (reelOffset - index * ReelView.SYMBOL_HEIGHT) % this.tapeHeight;
         });
     }
 

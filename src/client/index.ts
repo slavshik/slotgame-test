@@ -2,9 +2,6 @@ import {Application, DisplayObject} from "pixi.js";
 import {AssetsHelper} from "./utils/AssetsHelper";
 import {GameView} from "./views/GameView";
 import {IResizable} from "./views/IResizable";
-import {ReelView} from "./views/ReelView";
-import {GameModel} from "./model/GameModel";
-import {Random} from "../shared/Random";
 
 const main = async () => {
     const app = new Application({resolution: window.devicePixelRatio});
@@ -34,16 +31,18 @@ const main = async () => {
         ["casino.fnt"]
     );
     // const model = new GameModel();
-    // const reel = new ReelView(model.tapes[0]);
+    // const reel = new ReelView(model.tapes[0], 1);
     // reel.y = 40;
     // app.stage.addChild(reel);
     // (window as any).reel = reel;
     // let accelerating = false;
+    // //@ts-ignore
+    // reel.on(ReelView.ON_STOP, () => console.log(model.symbolToEmoji(reel.offset)));
     // document.addEventListener("click", () => {
     //     if (!accelerating) {
-    //         reel.accelerate();
+    //         reel.spin();
     //     } else {
-    //         reel.decelerate();
+    //         reel.stopAt(Random.range(0, 5));
     //     }
     //     accelerating = !accelerating;
     // });
